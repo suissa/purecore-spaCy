@@ -73,6 +73,10 @@ tmp/
 pip-log.txt
 pip-delete-this-directory.txt
 
+# TypeScript example
+typescript/node_modules/
+typescript/dist/
+
 # Unit test / coverage reports
 htmlcov/
 .tox/
