@@ -119,3 +119,7 @@ Desktop.ini
 
 # IPython
 .ipynb_checkpoints/
+
+# spaCy TS build artifacts
+spacy/ts/dist/
+spacy/ts/node_modules/
