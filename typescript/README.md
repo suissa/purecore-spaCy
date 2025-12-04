@@ -2,9 +2,8 @@
 
 This folder shows how to call existing **spaCy** pipelines (including the
 [Portuguese models](https://spacy.io/models/pt)) from a small TypeScript
-wrapper. The Node.js code invokes a short inline Python snippet (no separate
-`.py` file required) that loads the model and returns a JSON payload with
-tokens, sentences, and entities.
+wrapper. The Node.js code invokes a helper Python script that loads the model
+and returns a JSON payload with tokens, sentences, and entities.
 
 ## Pré-requisitos
 

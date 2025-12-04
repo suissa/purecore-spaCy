@@ -1,4 +1,5 @@
 import { spawn } from "child_process";
+import path from "path";
 
 export interface TokenView {
   text: string;
@@ -33,21 +34,29 @@ export interface SpacyBridgeOptions {
    * Default spaCy model to load (Portuguese small model by default).
    */
   model?: string;
+  /**
+   * Path to the helper Python script. Defaults to the bundled bridge.
+   */
+  bridgeScript?: string;
 }
 
 export class SpacyBridge {
   private readonly pythonPath: string;
   private readonly model: string;
+  private readonly bridgeScript: string;
 
   constructor(options: SpacyBridgeOptions = {}) {
     this.pythonPath = options.pythonPath ?? "python";
     this.model = options.model ?? "pt_core_news_sm";
+    this.bridgeScript =
+      options.bridgeScript ??
+      path.join(__dirname, "../python/spacy_bridge.py");
   }
 
   async analyze(text: string, modelOverride?: string): Promise<SpacyResponse> {
     const payload = { text };
     const model = modelOverride ?? this.model;
-    const args = ["-c", buildPythonScript(), "--model", model];
+    const args = [this.bridgeScript, "--model", model];
     const jsonOutput = await this.runPython(args, JSON.stringify(payload));
     return JSON.parse(jsonOutput) as SpacyResponse;
   }
@@ -61,17 +70,17 @@ export class SpacyBridge {
       let stdout = "";
       let stderr = "";
 
-      proc.stdout.on("data", (chunk: Buffer) => {
+      proc.stdout.on("data", (chunk) => {
         stdout += chunk.toString("utf8");
       });
 
-      proc.stderr.on("data", (chunk: Buffer) => {
+      proc.stderr.on("data", (chunk) => {
         stderr += chunk.toString("utf8");
       });
 
-      proc.on("error", (err: Error) => reject(err));
+      proc.on("error", (err) => reject(err));
 
-      proc.on("close", (code: number | null) => {
+      proc.on("close", (code) => {
         if (code !== 0) {
           reject(new Error(`Python exited with code ${code}: ${stderr}`));
         } else {
@@ -83,57 +92,6 @@ export class SpacyBridge {
       proc.stdin.end();
     });
   }
-}
-
-function buildPythonScript(): string {
-  return `import argparse, json, sys
-
-parser = argparse.ArgumentParser(description="spaCy bridge")
-parser.add_argument("--model", default="pt_core_news_sm")
-args = parser.parse_args()
-
-try:
-    import spacy
-except ImportError as exc:
-    sys.stderr.write("spaCy não está instalado: %s\n" % exc)
-    sys.exit(1)
-
-try:
-    nlp = spacy.load(args.model)
-except Exception as exc:  # pragma: no cover - runtime guard
-    sys.stderr.write("Falha ao carregar o modelo %s: %s\n" % (args.model, exc))
-    sys.exit(1)
-
-payload = json.load(sys.stdin)
-doc = nlp(payload.get("text", ""))
-
-def token_view(tok):
-    return {
-        "text": tok.text,
-        "lemma": tok.lemma_,
-        "pos": tok.pos_,
-        "tag": tok.tag_,
-        "dep": tok.dep_,
-        "entType": tok.ent_type_,
-    }
-
-def ent_view(ent):
-    return {
-        "text": ent.text,
-        "label": ent.label_,
-        "start": ent.start_char,
-        "end": ent.end_char,
-    }
-
-response = {
-    "model": args.model,
-    "text": doc.text,
-    "tokens": [token_view(tok) for tok in doc],
-    "entities": [ent_view(ent) for ent in doc.ents],
-    "sentences": [sent.text for sent in doc.sents],
-}
-
-json.dump(response, sys.stdout, ensure_ascii=False)`;
 }
 
 if (require.main === module) {
