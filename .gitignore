@@ -123,7 +123,3 @@ Desktop.ini
 # spaCy TS build artifacts
 spacy/ts/dist/
 spacy/ts/node_modules/
-
-# spaCy pipeline TypeScript stubs
-spacy/pipeline/ts/node_modules/
-spacy/pipeline/ts/dist/
