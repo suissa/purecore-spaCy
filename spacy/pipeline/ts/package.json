@@ -1,0 +1,12 @@
+{
+  "name": "spacy-pipeline-ts",
+  "version": "0.0.0",
+  "private": true,
+  "description": "TypeScript placeholders for spaCy pipeline modules",
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}

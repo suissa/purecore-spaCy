@@ -1,0 +1,13 @@
+{
+  "name": "spacy-core-ts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Initial TypeScript migration of the spaCy core helpers.",
+  "scripts": {
+    "build": "tsc --project tsconfig.json"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.4",
+    "typescript": "^5.5.4"
+  }
+}

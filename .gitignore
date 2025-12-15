@@ -73,6 +73,10 @@ tmp/
 pip-log.txt
 pip-delete-this-directory.txt
 
+# TypeScript example
+typescript/node_modules/
+typescript/dist/
+
 # Unit test / coverage reports
 htmlcov/
 .tox/
@@ -115,3 +119,11 @@ Desktop.ini
 
 # IPython
 .ipynb_checkpoints/
+
+# spaCy TS build artifacts
+spacy/ts/dist/
+spacy/ts/node_modules/
+
+# spaCy pipeline TypeScript stubs
+spacy/pipeline/ts/node_modules/
+spacy/pipeline/ts/dist/
